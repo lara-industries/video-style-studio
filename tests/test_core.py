@@ -58,7 +58,7 @@ class CoreTests(unittest.TestCase):
         scripts=ROOT/'skills/video-style-studio/scripts'
         env=dict(os.environ, PYTHONIOENCODING='cp1252', PYTHONUTF8='0')
         def cli(*args):
-            return subprocess.run([sys.executable,str(scripts/'studio.py'),*map(str,args)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=env)
+            return subprocess.run([sys.executable,str(scripts/'studio.py'),*map(str,args)],input=b'',stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=env,timeout=30)
         url='https://example.org/referencia-técnica.mp4'
         result=cli('init','--workspace',self.root.parent/'cli-project','--reference-url',url)
         self.assertEqual(result.returncode,0,result.stderr)
@@ -68,7 +68,7 @@ class CoreTests(unittest.TestCase):
         self.assertIn('público',json.loads(result.stderr.decode('utf-8'))['message'])
         result=cli('--help');self.assertEqual(result.returncode,0,result.stderr)
         self.assertIn('→',result.stdout.decode('utf-8'))
-        result=subprocess.run([sys.executable,str(scripts/'voice_with_secret.py')],stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=env)
+        result=subprocess.run([sys.executable,str(scripts/'voice_with_secret.py')],input=b'',stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=env,timeout=30)
         self.assertEqual(result.returncode,2)
         self.assertIn('envíes',result.stderr.decode('utf-8'))
     def test_paid_provider_requires_consent(self):
