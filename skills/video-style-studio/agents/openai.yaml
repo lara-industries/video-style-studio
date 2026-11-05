@@ -1,0 +1,6 @@
+interface:
+  display_name: "Video Style Studio"
+  short_description: "De referencia y voz a una demo animada de 15s"
+  default_prompt: "Usa $video-style-studio para estudiar este video de referencia y crear una demo animada con mi idea y mi voz."
+policy:
+  allow_implicit_invocation: true
