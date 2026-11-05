@@ -167,13 +167,35 @@ def decision_record(decision, response_path):
     return {'decision': decision, 'verbatim': text, 'recorded_at': now(),
             'identity_check': 'Not authenticated; agent records the actual user response.'}
 
+def require_compatible(root, data, require_style=True):
+    """Validate current evidence at every production boundary, not just at style creation."""
+    if not data.get('analysis'):
+        raise StudioError('Falta el análisis vigente de la referencia.')
+    analysis = read(checked(root, data['analysis']))
+    if analysis.get('compatibility', {}).get('supported') is not True or analysis.get('visual_type') not in ('2d', 'motion-graphics', '2.5d'):
+        raise StudioError('El análisis vigente no es compatible con el motor 2D. Revisa la técnica o acuerda una adaptación; se conservó el estilo anterior como antecedente.')
+    source = data.get('reference', {}).get('media', {}).get('sha256')
+    if not source or analysis.get('source_sha256') != source:
+        raise StudioError('El análisis vigente no pertenece a esta referencia.')
+    if require_style:
+        if not data.get('style'):
+            raise StudioError('Falta un estilo compatible con el análisis vigente.')
+        style = read(checked(root, data['style']))
+        if style.get('renderer') != 'pillow2d' or style.get('source_sha256') != source:
+            raise StudioError('El estilo no coincide con el motor o la referencia vigente.')
+    return analysis
+
 def fingerprint(root, data):
     records = {k: data[k] for k in ('analysis', 'style', 'voice', 'story', 'scene') if k in data}
     if len(records) != 5:
         raise StudioError('Faltan análisis, estilo, audio, guion o escena.')
     for item in records.values():
         checked(root, item)
+    require_compatible(root, data)
     records['render_settings'] = data['settings']
+    package = Path(__file__).resolve().parents[2]
+    records['renderer_sha256'] = sha(Path(__file__).with_name('render.py'))
+    records['caption_font_sha256'] = sha(package / 'assets/fonts/NotoSans.ttf')
     checked(root, data['reference']['media'])
     records['reference_sha256'] = data['reference']['media']['sha256']
     return hashlib.sha256(json.dumps(records, sort_keys=True).encode()).hexdigest()

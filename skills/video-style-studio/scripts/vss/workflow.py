@@ -7,7 +7,7 @@ import wave
 from array import array
 import tempfile
 from pathlib import Path
-from .core import StudioError, checked, consent, doctor, guard_secret, now, probe, read, require_local, run, save, sha, state, store_file, under, write
+from .core import StudioError, checked, consent, doctor, guard_secret, now, probe, read, require_compatible, require_local, run, save, sha, state, store_file, under, write
 from .network import fetch, is_social, public_url, social_metadata
 
 
@@ -203,9 +203,8 @@ def analyze(root, path):
 
 def style(root, path):
     root, data = state(root)
-    a = read(checked(root, data['analysis'])); s = read(path)
-    if a.get('compatibility', {}).get('supported') is not True or a.get('visual_type') not in ('2d', 'motion-graphics', '2.5d'):
-        raise StudioError('Esta referencia no es compatible con el motor2D disponible. Propón otra técnica o una adaptación explícita; no prometas una clonación imposible.')
+    require_compatible(root, data, require_style=False)
+    s = read(path)
     if s.get('renderer') != 'pillow2d' or not s.get('name') or not s.get('rules') or not s.get('caption_preset'):
         raise StudioError('El estilo requiere nombre, reglas, caption_preset y renderer pillow2d.')
     if s.get('source_sha256') != data['reference']['media']['sha256']:
@@ -217,6 +216,7 @@ def style(root, path):
 
 def export_style(root, destination):
     root, data = state(root)
+    require_compatible(root, data)
     src = checked(root, data['style']); dest = Path(destination)
     if dest.exists(): raise StudioError('El destino ya existe; no se reemplazó el estilo.')
     dest.parent.mkdir(parents=True, exist_ok=True); shutil.copyfile(src, dest)
@@ -267,6 +267,7 @@ def prepare(root, story_path, scene_path):
     root, data = state(root); require_local(data)
     if not data.get('style') or not data.get('voice'):
         raise StudioError('Primero guarda el estilo y aporta una voz. Una imagen muda no sustituye la demo.')
+    require_compatible(root, data)
     if data['voice'].get('level', {}).get('needs_attention'):
         raise StudioError('Tu nota de voz sigue muy baja tras un ajuste conservador. Conservé el original; acerca el micrófono o revisa el audio antes de añadir efectos.')
     story = read(story_path)
@@ -290,8 +291,7 @@ def prepare(root, story_path, scene_path):
 
 def reuse_style(source_workspace, destination):
     source, previous = state(source_workspace)
-    for key in ('analysis', 'style'):
-        checked(source, previous[key])
+    require_compatible(source, previous)
     destination = Path(destination).resolve()
     if destination.exists() and any(destination.iterdir()):
         raise StudioError('El nuevo proyecto debe estar vacío.')

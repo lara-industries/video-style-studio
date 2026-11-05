@@ -8,7 +8,12 @@ import sys
 import wave
 from array import array
 from pathlib import Path
-from .core import StudioError, checked, fingerprint, probe, read, require_local, run, save, sha, state, under, write
+from .core import StudioError, checked, fingerprint, probe, read, require_compatible, require_local, run, save, sha, state, under, write
+
+
+def caption_font(size):
+    from PIL import ImageFont
+    return ImageFont.truetype(str(Path(__file__).resolve().parents[2] / 'assets/fonts/NotoSans.ttf'), size=size)
 
 
 def captions(frame, t, story, style):
@@ -17,7 +22,7 @@ def captions(frame, t, story, style):
     if not active: return
     w, h = frame.size
     preset = style['caption_preset']; size = max(12, round(w * float(preset.get('size_ratio', .045))))
-    font = ImageFont.load_default(size=size)
+    font = caption_font(size)
     d = ImageDraw.Draw(frame); max_width = w * .84; lines = []; line = ''
     for token in active['text'].split():
         test = (line + ' ' + token).strip()
@@ -28,10 +33,17 @@ def captions(frame, t, story, style):
     if len(lines) > 3: raise StudioError('Una línea de captions ocupa más de tres renglones. Divide el cue y revisa sus tiempos.')
     y = round(h * float(preset.get('y_ratio', .84)))
     if not .10 * h <= y <= .90 * h: raise StudioError('Caption fuera del área segura.')
+    stroke = max(1, size // 18)
+    boxes = [d.textbbox((0, n * (size + 8)), text, font=font, stroke_width=stroke) for n, text in enumerate(lines)]
+    top = min(b[1] for b in boxes); bottom = max(b[3] for b in boxes)
+    if bottom - top > .80 * h:
+        raise StudioError('El bloque completo de captions no cabe en el área segura. Reduce tamaño o divide el cue.')
+    y = min(y, math.floor(.90 * h - bottom))
+    y = max(y, math.ceil(.10 * h - top))
     for n, text in enumerate(lines):
         x = round((w - d.textlength(text, font=font)) / 2)
         d.text((x, y + n * (size + 8)), text, font=font, fill=preset.get('color', '#FFFFFF'),
-               stroke_width=max(1, size // 18), stroke_fill=preset.get('outline', '#161616'))
+               stroke_width=stroke, stroke_fill=preset.get('outline', '#161616'))
 
 
 def synth_events(path, duration, fps, events):
@@ -57,6 +69,7 @@ def synth_events(path, duration, fps, events):
 def worker(root, destination, duration):
     from PIL import Image
     root, data = state(root); scene = checked(root, data['scene']); story = read(checked(root, data['story'])); style = read(checked(root, data['style']))
+    require_compatible(root, data)
     width, height, fps = [int(data['settings'][k]) for k in ('width', 'height', 'fps')]
     if not 128 <= width <= 1920 or not 128 <= height <= 2160 or width % 2 or height % 2 or fps not in (24, 25, 30, 60):
         raise StudioError('Dimensiones/fps no admitidos.')

@@ -14,7 +14,7 @@ Traducir reglas a acciones verificables: una pieza cae por una trayectoria acele
 
 Coloca voz, captions, aparición de UI y contactos sonoros en un reloj. Los efectos siguen la colisión visible, no una palabra aproximada. Una boca usa voz/timing real y se cierra en pausas; si no se implementó rig, no afirmar lip sync. No todos los estilos necesitan personaje o subtítulos de la misma forma.
 
-La tipografía debe ser legible y tener licencia adecuada. El compositor base usa la fuente incluida con Pillow; una fuente del usuario requiere comprobar origen y guardarla como asset autorizado. Para una tipografía específica, implementa la escena/preset correspondiente y compruébala; no declarar fidelidad pixel perfect por elegir una fuente parecida.
+La tipografía debe ser legible y tener licencia adecuada. El compositor base incluye Noto Sans bajo SIL Open Font License 1.1, con tildes, ñ y signos españoles. Su licencia y procedencia están en `assets/fonts/`. Es una fuente portable inicial, no la tipografía de una referencia particular. Una fuente del usuario requiere comprobar origen y guardarla como asset autorizado. Para una tipografía específica, implementa la escena/preset correspondiente y compruébala; no declarar fidelidad pixel perfect por elegir una fuente parecida. Se comprueba el bloque completo de captions dentro del área vertical segura; si sus tres renglones exceden el margen inferior, el bloque sube conservando el tamaño.
 
 ## Revisión del archivo real
 

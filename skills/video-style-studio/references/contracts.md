@@ -57,6 +57,8 @@ Son obligatorios los aspectos `composition`, `palette`, `typography`, `camera`, 
 
 Añadir los parámetros que la escena necesite: paleta, ritmos, márgenes, curvas, materiales, zonas protegidas. No incrustar un rostro/voz en estas reglas. `style --file` lo guarda; `export-style --output` exporta solo reglas. `reuse-style --from-workspace ANTERIOR --workspace NUEVO` copia evidencia y estilo a un proyecto sin voz/guion/aprobaciones. Permite otra historia sin volver a pagar una captura.
 
+La compatibilidad se comprueba contra el análisis vigente también al preparar, renderizar, exportar y reutilizar. Un nuevo análisis incompatible conserva los antecedentes, pero impide usarlos para producir. Los hashes del compositor y la fuente de captions forman parte de las entradas que vinculan demo y aprobación.
+
 ## Historia, escena y audio
 
 `voice-file --file ...` importa audio. `voice-eleven --text-file ...` genera una vez tras consentimiento y preserva la respuesta. `prepare` requiere ambos estilo y voz y recibe:

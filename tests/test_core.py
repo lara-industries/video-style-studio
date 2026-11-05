@@ -16,8 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'skills/video-style-studio/scripts'))
 from vss.core import StudioError, decision_record, doctor, fingerprint, guard_secret, sha, state, store_file, under, write
 from vss.network import public_url, fetch, is_social, social_metadata
-from vss.workflow import init, style, voice_eleven, voice_file, voice_level, status
-from vss.render import gate_full
+from vss.workflow import init, style, voice_eleven, voice_file, voice_level, status, prepare, reuse_style
+from vss.render import gate_full, render, captions, caption_font
 
 class CoreTests(unittest.TestCase):
     def setUp(self):
@@ -65,6 +65,8 @@ class CoreTests(unittest.TestCase):
         for k in ('analysis','style','voice','story','scene'):
             p=self.root/(k+'.txt');p.write_text(k);self.data[k]=store_file(self.root,p,k)
         ref=self.root/'reference.dat';ref.write_bytes(b'reference');self.data['reference']['media']=store_file(self.root,ref,'reference')
+        for key,value in [('analysis',{'source_sha256':sha(ref),'visual_type':'motion-graphics','compatibility':{'supported':True}}),('style',{'source_sha256':sha(ref),'renderer':'pillow2d'})]:
+            path=self.root/(key+'.json');write(path,value);self.data[key]=store_file(self.root,path,key)
         digest=fingerprint(self.root,self.data); p=self.root/'demo.mp4';p.write_bytes(b'fake-unit-only')
         self.data['demo']={**store_file(self.root,p,'demo'),'inputs_sha256':digest}
         self.data['demo_approval']={'decision':'approve','inputs_sha256':digest,'demo_sha256':sha(p)}
@@ -80,6 +82,27 @@ class CoreTests(unittest.TestCase):
         self.data['analysis']=store_file(self.root,p,'analysis');write(self.root/'project.json',self.data)
         s=self.root/'style.json';write(s,{'name':'test','renderer':'pillow2d'})
         with self.assertRaises(StudioError): style(self.root,s)
+    def test_changed_analysis_blocks_existing_style_everywhere(self):
+        self.full_inputs();old_style=self.data['style'].copy()
+        path=self.root/'new-analysis.json';write(path,{'source_sha256':self.data['reference']['media']['sha256'],'visual_type':'live-action','compatibility':{'supported':False}})
+        self.data['analysis']=store_file(self.root,path,'new-analysis');write(self.root/'project.json',self.data)
+        with self.assertRaisesRegex(StudioError,'análisis vigente'): fingerprint(self.root,self.data)
+        with patch('vss.workflow.require_local'),self.assertRaisesRegex(StudioError,'análisis vigente'): prepare(self.root,self.root/'unused.json',self.root/'unused.py')
+        with patch('vss.render.require_local'),self.assertRaisesRegex(StudioError,'análisis vigente'): render(self.root)
+        with self.assertRaisesRegex(StudioError,'análisis vigente'): reuse_style(self.root,self.root.parent/'next')
+        _,saved=state(self.root);self.assertEqual(saved['style'],old_style)
+        self.assertTrue((self.root/old_style['path']).exists());self.assertFalse((self.root.parent/'next').exists())
+    def test_spanish_glyphs_are_present(self):
+        font=caption_font(40);missing=bytes(font.getmask('\u0378'))
+        for char in 'áéíóúüñÁÉÍÓÚÜÑ¿¡':
+            with self.subTest(char=char): self.assertNotEqual(bytes(font.getmask(char)),missing)
+    def test_complete_caption_stays_inside_vertical_safe_area(self):
+        from PIL import Image
+        frame=Image.new('RGB',(360,640),'black')
+        story={'captions':[{'start':0,'end':1,'text':'Esta prueba comprueba que las letras caben en tres renglones dentro del cuadro.'}]}
+        preset={'caption_preset':{'size_ratio':.05,'y_ratio':.9,'color':'white','outline':'white'}}
+        captions(frame,0,story,preset)
+        box=frame.getbbox();self.assertIsNotNone(box);self.assertGreaterEqual(box[1],64);self.assertLessEqual(box[3],577)
     def test_resume_preserves_reference(self):
         again=init(self.root,'https://example.org/reference.mp4');self.assertEqual(again['created'],self.data['created'])
         with self.assertRaises(StudioError):init(self.root,'https://example.org/other.mp4')
