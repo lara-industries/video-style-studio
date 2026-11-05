@@ -56,6 +56,17 @@ python skills/video-style-studio/scripts/studio.py --help
 
 La escena es código Python que se ejecuta localmente. El agente debe leerla antes de ejecutarla. Este paquete no es un sandbox de código.
 
+## Pruebas y licencias
+
+El [CI público](https://github.com/lara-industries/video-style-studio/actions/workflows/ci.yml) ejecuta pruebas unitarias y una integración con instalación, demo de 15 segundos, aprobación y export completo en macOS, Windows y Linux. La integración usa una referencia y audio sintéticos; valida el funcionamiento, no la calidad creativa de una referencia ni el parecido de una voz.
+
+```sh
+python -m unittest discover -s tests -p 'test_*.py' -v
+python tests/integration.py --output /ruta/vacia/prueba
+```
+
+El código usa licencia MIT. La fuente incluida para captions es Noto Sans, con [su licencia SIL OFL](skills/video-style-studio/assets/fonts/OFL.txt).
+
 ## Volver a usarla
 
 ```text

@@ -3,10 +3,11 @@ import getpass
 import os
 import sys
 from studio import main
-from vss.core import StudioError
+from vss.core import StudioError, configure_utf8_output
 import json
 
 if __name__ == '__main__':
+    configure_utf8_output()
     try:
         if not sys.stdin.isatty():
             raise StudioError('Usa un gestor de secretos o una terminal local interactiva; no envíes la llave por chat.')

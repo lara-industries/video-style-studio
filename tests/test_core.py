@@ -2,6 +2,7 @@ import hashlib
 import json
 import os
 import socket
+import subprocess
 import sys
 import tempfile
 import shutil
@@ -53,6 +54,23 @@ class CoreTests(unittest.TestCase):
         with self.assertRaises(StudioError): under(self.root,'escape/outside')
     def test_capability_not_app_detection(self):
         d=doctor(); self.assertEqual(d['execution_location'],'unknown'); self.assertEqual(d['desktop_application'],'unknown')
+    def test_cli_utf8_when_parent_requests_cp1252(self):
+        scripts=ROOT/'skills/video-style-studio/scripts'
+        env=dict(os.environ, PYTHONIOENCODING='cp1252', PYTHONUTF8='0')
+        def cli(*args):
+            return subprocess.run([sys.executable,str(scripts/'studio.py'),*map(str,args)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=env)
+        url='https://example.org/referencia-técnica.mp4'
+        result=cli('init','--workspace',self.root.parent/'cli-project','--reference-url',url)
+        self.assertEqual(result.returncode,0,result.stderr)
+        self.assertEqual(json.loads(result.stdout.decode('utf-8'))['reference']['url'],url)
+        result=cli('init','--workspace',self.root.parent/'bad-project','--reference-url','https://user:pass@example.org/video.mp4')
+        self.assertEqual(result.returncode,2)
+        self.assertIn('público',json.loads(result.stderr.decode('utf-8'))['message'])
+        result=cli('--help');self.assertEqual(result.returncode,0,result.stderr)
+        self.assertIn('→',result.stdout.decode('utf-8'))
+        result=subprocess.run([sys.executable,str(scripts/'voice_with_secret.py')],stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,env=env)
+        self.assertEqual(result.returncode,2)
+        self.assertIn('envíes',result.stderr.decode('utf-8'))
     def test_paid_provider_requires_consent(self):
         with patch('vss.workflow.require_local'):
             with self.assertRaises(StudioError): voice_eleven(self.root,self.root/'missing.txt')
@@ -63,7 +81,7 @@ class CoreTests(unittest.TestCase):
         with self.assertRaises(StudioError): gate_full(self.root,self.data)
     def full_inputs(self):
         for k in ('analysis','style','voice','story','scene'):
-            p=self.root/(k+'.txt');p.write_text(k);self.data[k]=store_file(self.root,p,k)
+            p=self.root/(k+'.txt');p.write_text(k,encoding='utf-8');self.data[k]=store_file(self.root,p,k)
         ref=self.root/'reference.dat';ref.write_bytes(b'reference');self.data['reference']['media']=store_file(self.root,ref,'reference')
         for key,value in [('analysis',{'source_sha256':sha(ref),'visual_type':'motion-graphics','compatibility':{'supported':True}}),('style',{'source_sha256':sha(ref),'renderer':'pillow2d'})]:
             path=self.root/(key+'.json');write(path,value);self.data[key]=store_file(self.root,path,key)
@@ -130,7 +148,7 @@ class CoreTests(unittest.TestCase):
         self.assertLessEqual(result['gain_db'],12);self.assertTrue(result['needs_attention'])
     def test_paid_response_survives_validation_failure(self):
         self.data['consents']['elevenlabs-generation']={'decision':'approve','verbatim':'Sí, genera esa voz.'};write(self.root/'project.json',self.data)
-        text=self.root/'text.txt';text.write_text('Hola mundo')
+        text=self.root/'text.txt';text.write_text('Hola mundo',encoding='utf-8')
         def fake_fetch(url,destination,**kwargs):Path(destination).write_bytes(b'provider-response');return {}
         with patch.dict(os.environ,{'ELEVENLABS_API_KEY':'fake-unit-credential','ELEVENLABS_VOICE_ID':'abcdefghijklmno'}),patch('vss.workflow.require_local'),patch('vss.workflow.fetch',side_effect=fake_fetch),patch('vss.workflow.voice_file',side_effect=StudioError('invalid media')):
             with self.assertRaises(StudioError):voice_eleven(self.root,text)

@@ -14,6 +14,12 @@ from pathlib import Path
 class StudioError(Exception):
     pass
 
+def configure_utf8_output():
+    """CLI output is UTF-8 even when redirected on a legacy Windows locale."""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8', errors='backslashreplace')
+
 def now():
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
 

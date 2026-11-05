@@ -16,6 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 TEXT = 'Una buena idea necesita movimiento. Primero cae, después encuentra equilibrio. Cada golpe tiene una respuesta. Así probamos una herramienta antes de construir una historia completa.'
 
 def main():
+    sys.stdout.reconfigure(encoding='utf-8',errors='backslashreplace')
+    sys.stderr.reconfigure(encoding='utf-8',errors='backslashreplace')
     ap=argparse.ArgumentParser();ap.add_argument('--output',required=True);ap.add_argument('--voice-file');a=ap.parse_args()
     out=Path(a.output).resolve()
     if out.exists() and any(out.iterdir()):raise RuntimeError('Use an empty output directory.')
@@ -50,7 +52,7 @@ def main():
     call('transcript','--workspace',project,'--file',transcript,'--source','verified-no-speech')
     extraction=call('extract','--workspace',project)
     native=call('burst','--workspace',project,'--start-frame',0,'--end-frame',5)
-    state=json.loads((project/'project.json').read_text());source_sha=state['reference']['media']['sha256']
+    state=json.loads((project/'project.json').read_text(encoding='utf-8'));source_sha=state['reference']['media']['sha256']
     rules=[{'aspect':key,'status':'observed' if key!='narrative' else 'proposed','evidence':'Fixture frames0-35; automated test declarations, not human creative analysis.','rule':'Original generic motion exercise; user style must be measured independently.'} for key in ['composition','palette','typography','camera','motion','narrative','sound']]
     analysis=dump('analysis.json',{'source_sha256':source_sha,'analyst':'integration-fixture (not human review)',
         'literal_reading':{'title':True,'description':True,'transcript':True},'reviewed_contact_sheets':[s['path'] for s in extraction['contact_sheets']],
@@ -77,19 +79,19 @@ def main():
         'events':[{'frame':round(t*30),'kind':'impact','gain':.13} for t in (1.2,6.2,11.2)]})
     call('prepare','--workspace',project,'--story',story,'--scene',scene)
     # Keep the acceptance render fast while exercising the real frame/audio exporter.
-    state=json.loads((project/'project.json').read_text());state['settings'].update(width=360,height=640)
+    state=json.loads((project/'project.json').read_text(encoding='utf-8'));state['settings'].update(width=360,height=640)
     (project/'project.json').write_text(json.dumps(state),encoding='utf-8')
     call('render-full','--workspace',project,fail=True)
     demo=call('render-demo','--workspace',project);assert demo['frames']==450 and demo['duration']==15 and demo['audio']
     answer=out/'fixture-approval.txt';answer.write_text('Sí, no cambies nada. Aprobación automatizada del fixture técnico, no aprobación humana.',encoding='utf-8')
     call('approve-demo','--workspace',project,'--decision','approve','--response-file',answer)
     # Changed input invalidates an approval. Restore exact bytes afterwards.
-    st=json.loads((project/'project.json').read_text());st['settings']['width']=362;(project/'project.json').write_text(json.dumps(st))
-    call('render-full','--workspace',project,fail=True);st['settings']['width']=360;(project/'project.json').write_text(json.dumps(st))
+    st=json.loads((project/'project.json').read_text(encoding='utf-8'));st['settings']['width']=362;(project/'project.json').write_text(json.dumps(st),encoding='utf-8')
+    call('render-full','--workspace',project,fail=True);st['settings']['width']=360;(project/'project.json').write_text(json.dumps(st),encoding='utf-8')
     full=call('render-full','--workspace',project)
     # Reuse actually carries evidence/style and clears narration, story and approval.
     reused=out/'next-story';call('reuse-style','--from-workspace',project,'--workspace',reused)
-    new=json.loads((reused/'project.json').read_text());assert 'style' in new and all(k not in new for k in ('voice','story','scene','demo_approval','full'))
+    new=json.loads((reused/'project.json').read_text(encoding='utf-8'));assert 'style' in new and all(k not in new for k in ('voice','story','scene','demo_approval','full'))
     report={'passed':True,'isolated_cli':str(cli),'network':'VSS_OFFLINE=1; no credentials passed','reference_method':'imported-user-file; never claimed as download',
         'reference_frames':extraction['frame_count'],'audio_kind':audio_kind,'demo':demo,'full':full,'gate_rejected_before_approval':True,'gate_rejected_after_input_change':True,'style_reuse':True,
         'limitations':'Technical acceptance test. Automated semantic/approval fixtures are labeled and are not real user approvals.'}

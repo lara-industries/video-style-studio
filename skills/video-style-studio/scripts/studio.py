@@ -6,7 +6,7 @@ import os
 import shutil
 import sys
 from pathlib import Path
-from vss.core import StudioError, checked, decision_record, doctor, fingerprint, read, save, state, write
+from vss.core import StudioError, checked, configure_utf8_output, decision_record, doctor, fingerprint, read, save, state, write
 from vss import workflow as w
 
 
@@ -81,6 +81,7 @@ def main(argv=None):
     if c == 'status': return w.status(a.workspace)
 
 if __name__ == '__main__':
+    configure_utf8_output()
     try:
         result = main()
         if result is not None: print(json.dumps(result, ensure_ascii=False, indent=2))
