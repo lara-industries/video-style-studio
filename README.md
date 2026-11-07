@@ -1,4 +1,4 @@
-<div align="center">
+![De referencia, idea y voz a una demo revisable](docs/images/workflow.svg)
 
 # Una referencia. Tu idea. Un video propio.
 
@@ -7,11 +7,10 @@
 Dale a tu agente un video que te guste, cuéntale qué quieres decir y añade tu voz.
 Primero ves 15 segundos. Tú decides si seguimos.
 
-[**Empezar gratis →**](START-HERE.md) · [Descargar la skill](https://github.com/lara-industries/video-style-studio/releases/latest) · [Ver las pruebas](https://github.com/lara-industries/video-style-studio/actions/workflows/ci.yml)
+[**Empezar con mi agente →**](START-HERE.md) · [Qué incluye](#qué-incluye-y-hasta-dónde-llega) · [Ver las pruebas](https://github.com/lara-industries/video-style-studio/actions/workflows/ci.yml)
 
 **Código abierto · Archivos en tu computador · Tu aprobación antes del completo**
 
-</div>
 
 ---
 
@@ -28,29 +27,30 @@ Esta skill le da a tu agente un proceso para hacerlo: estudiar la referencia, gu
 Abre **Claude Code en modo Local**, **Codex** u otro agente con archivos, terminal local y visión. Si usas ChatGPT, comprueba que la sesión tenga esas capacidades; instalar su app por sí solo no basta.
 
 ```text
-Lee https://github.com/lara-industries/video-style-studio/blob/main/START-HERE.md
-y ayúdame a instalar Video Style Studio.
-
-Comprueba que puedes trabajar en mi computador. Explícame qué necesitas
-instalar y guíame paso a paso.
-
-Quiero crear un video animado: pídeme una referencia, mi idea y una nota
-de voz o ElevenLabs. Muéstrame primero 15 segundos con audio y espera
-mi aprobación antes de hacer el video completo.
+Lee https://github.com/lara-industries/video-style-studio/blob/main/START-HERE.md y guíame para instalar Video Style Studio y crear mi primera demo de 15 segundos.
 ```
 
 **Necesitas:** un enlace de referencia, una idea y tu narración. Puedes grabar una nota de voz. No necesitas saber programar; sí necesitas un agente capaz de ejecutar el trabajo en tu equipo.
 
 ## Qué vas a tener
 
-| Tú aportas | Tu agente prepara | Tú conservas |
-|---|---|---|
-| Un video de referencia y lo que te gusta | Análisis de composición, color, cámara, movimiento y sonido | Una ficha de estilo reutilizable |
-| Una idea y tu voz | Historia propia, escena 2D, captions y efectos de contacto | Demo de 15 segundos con audio |
-| Tu feedback sobre la demo | Cambios y, tras aprobar, el montaje completo | MP4 y proyecto local |
-| Una grabación existente | Plan de cortes, captions y prueba antes del completo | Original intacto y edición reproducible |
+**Un estilo que puedes volver a usar.** Tu agente estudia la referencia y conserva sus reglas de composición, color, cámara y movimiento. La próxima pieza parte de esa ficha.
 
-La ficha guarda reglas de animación. Tu rostro, voz, música y materiales siguen siendo tuyos: tú eliges qué usar.
+**Una primera versión que puedes ver y escuchar.** Una demo de 15 segundos con tu idea y tu narración. Sirve para decidir si el camino visual y el ritmo te gustan.
+
+**Un video propio, después de tu aprobación.** Pides cambios antes de producir el completo. Conservas el MP4 y el proyecto local.
+
+**Otra ruta si ya te grabaste.** El agente puede preparar cortes revisados y subtítulos sobre una grabación existente, manteniendo intacto el original.
+
+## Cómo dirigir sin hablar en código
+
+> Quiero explicar por qué esta idea importa. Me gusta el movimiento de esta referencia, pero quiero otro personaje y mi propia voz. Enséñame primero quince segundos.
+
+Después de ver la demo, puedes pedir algo concreto:
+
+> El texto se va demasiado pronto. Déjalo hasta terminar la frase y haz que el objeto frene antes de tocar el suelo.
+
+Son ejemplos de instrucciones para tu agente, no promesas de fidelidad automática a cualquier referencia. La demo es donde compruebas el resultado.
 
 ## Así se trabaja
 
@@ -86,6 +86,14 @@ El resultado creativo depende de la referencia, los materiales y la escena que c
 El código y la skill son gratuitos bajo [licencia MIT](LICENSE). El motor local no requiere una clave de OpenAI. Tu agente puede necesitar una suscripción; ElevenLabs y ScrapeCreators son opcionales y cobran por separado. No incluye las suscripciones ni música de terceros.
 
 La instalación requiere Python 3.10+, Pillow y FFmpeg/ffprobe. yt-dlp añade descargas; Whisper es opcional para transcribir localmente. El agente te explica qué necesita en tu sistema y lo instala solo con tu autorización.
+
+## Por qué también hay un ZIP
+
+El camino más sencillo es **pegar la línea de inicio en tu agente**. El código está visible en este repositorio.
+
+El [ZIP de la última versión](https://github.com/lara-industries/video-style-studio/releases/latest) es una copia completa para quien prefiera descargarla: incluye `SKILL.md`, scripts, referencias, fuente y licencia. Instalar únicamente `SKILL.md` dejaría fuera las herramientas que necesita.
+
+Conserva la carpeta completa. Tu agente explica qué falta instalar y cómo hacerlo en tu sistema antes de ejecutar cambios.
 
 ## Una herramienta que puedes inspeccionar
 

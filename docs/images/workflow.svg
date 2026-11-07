@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" role="img" aria-label="Video Style Studio: referencia, idea y voz; dirección con tu agente; demo de quince segundos; aprobación antes del video completo">
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#111820"/><stop offset="1" stop-color="#1b2c30"/></linearGradient></defs>
+<rect width="960" height="600" rx="28" fill="url(#bg)"/>
+<g font-family="Arial, Helvetica, sans-serif"><text x="48" y="55" font-size="16" letter-spacing="4" fill="#9ce8c4">VIDEO STYLE STUDIO</text><text x="48" y="117" font-size="40" font-weight="700" fill="#fff">Tú diriges. Tu agente construye.</text><text x="48" y="155" font-size="21" fill="#b9c8cb">Una referencia, tu idea y tu voz. Primero, 15 segundos.</text>
+<g fill="#223338" stroke="#40565c"><rect x="48" y="204" width="256" height="254" rx="20"/><rect x="352" y="204" width="256" height="254" rx="20"/><rect x="656" y="204" width="256" height="254" rx="20"/></g>
+<g fill="#9ce8c4" font-size="15" font-weight="700"><text x="70" y="239">01 · TU MATERIAL</text><text x="374" y="239">02 · CON TU AGENTE</text><text x="678" y="239">03 · TU PRIMER CORTE</text></g>
+<rect x="70" y="264" width="212" height="94" rx="10" fill="#e6e9e2"/><circle cx="125" cy="310" r="25" fill="#dd7855"/><rect x="172" y="283" width="74" height="54" rx="10" fill="#334c51"/>
+<g fill="#c9d8d9" font-size="18"><text x="70" y="391">Referencia + idea</text><text x="70" y="422">Tu narración</text></g>
+<g fill="none" stroke="#9ce8c4" stroke-width="3" stroke-linecap="round"><path d="M320 321h16m-5-5 5 5-5 5M624 321h16m-5-5 5 5-5 5"/><path d="M378 285h9m10 0h178M378 315h9m10 0h150M378 345h9m10 0h164"/></g>
+<g fill="#c9d8d9" font-size="18"><text x="374" y="391">Estudia y construye</text><text x="374" y="422">Ajusta con tu feedback</text></g>
+<rect x="678" y="264" width="212" height="94" rx="10" fill="#9ce8c4"/><path d="M768 286v49l41-24z" fill="#16282a"/><g fill="#c9d8d9" font-size="18"><text x="678" y="391">Demo de 15 segundos</text><text x="678" y="422">Con tu audio</text></g>
+<rect x="48" y="491" width="864" height="63" rx="14" fill="#0f1b20" stroke="#49645e"/><circle cx="78" cy="522" r="6" fill="#9ce8c4"/><text x="98" y="529" fill="#eaf6ef" font-size="20">El video completo empieza después de tu aprobación.</text>
+</g></svg>
