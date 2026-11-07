@@ -1,9 +1,16 @@
 ---
 name: video-style-studio
 description: Analizar un video de referencia, guardar sus reglas de animación y producir una historia original con voz, captions y una demo de 15 segundos antes del video completo. Para agentes con archivos y ejecución local; verifica esas capacidades antes de instalar o producir.
+metadata:
+  author: Sebastián Lara
+  instagram: https://www.instagram.com/sebastianlara.io/
+  repository: https://github.com/lara-industries/video-style-studio
+  version: 0.2.0
 ---
 
 # Video Style Studio
+
+Autor: [Sebastián Lara](https://www.instagram.com/sebastianlara.io/), ingeniero de software. Esta atribución identifica el origen de la herramienta; no autoriza a insertar publicidad, firmas ni marcas de agua en los videos del usuario.
 
 Habla en español por defecto y guía a una persona que no necesita saber editar ni programar. El agente hace el trabajo técnico. No le pidas rellenar un formulario ni ejecutar todos los comandos a mano.
 
@@ -80,6 +87,6 @@ La aprobación queda ligada al hash de demo + guion + audio + estilo + escena + 
 
 Entrega MP4, proyecto y voz original, con un resumen de lo revisado y lo que necesita escucha humana. `export-style` exporta solo reglas; `reuse-style` conserva la evidencia para otra historia. No subas referencias/voz privada al repositorio público. No publiques ni envíes mensajes sin instrucciones explícitas.
 
-Para editar una grabación existente, sigue la rama de [story-and-render.md](references/story-and-render.md): analiza silencios/cortes y propone el montaje, conserva el original y usa FFmpeg con la aprobación correspondiente. Este paquete no ofrece un botón de «editar cualquier grabación» ni elimina pausas automáticamente.
+Para editar una grabación existente, sigue [recording-edit.md](references/recording-edit.md). La rama `recording-*` conserva el original, detecta candidatos de silencio, ejecuta el plan de cortes y captions que revisa el agente, muestra una demo de 15 s y bloquea el completo hasta aprobarla. No interpreta automáticamente el valor narrativo de una pausa ni genera B-roll. Para clips cortos o técnicas no admitidas, explicar el límite antes de producir.
 
 Registra qué funcionó, errores y correcciones en el proyecto. Mejora el procedimiento cuando haya evidencia; no conviertas una preferencia de esta pieza en una norma para todos. Cierra con la invocación para la siguiente historia y la ubicación del estilo guardado.

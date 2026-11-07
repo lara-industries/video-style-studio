@@ -8,12 +8,14 @@ import sys
 from pathlib import Path
 from vss.core import StudioError, checked, configure_utf8_output, decision_record, doctor, fingerprint, read, save, state, write
 from vss import workflow as w
+from vss import recording
 
 
 def parser():
     p = argparse.ArgumentParser(description='Video Style Studio · referencia → estilo → demo → aprobación → video')
     sub = p.add_subparsers(dest='command', required=True)
     sub.add_parser('doctor')
+    recording.add_commands(sub)
     q = sub.add_parser('install'); q.add_argument('--destination', required=True)
     q = sub.add_parser('init'); q.add_argument('--workspace', required=True); q.add_argument('--reference-url', required=True)
     q = sub.add_parser('confirm-environment'); q.add_argument('--workspace', required=True); q.add_argument('--evidence', required=True)
@@ -40,6 +42,7 @@ def parser():
 
 def main(argv=None):
     a = parser().parse_args(argv); c = a.command
+    if c.startswith('recording-'): return recording.command(a)
     if c == 'doctor': return doctor()
     if c == 'install':
         src = Path(__file__).resolve().parent.parent; dest = Path(a.destination).expanduser().resolve() / src.name

@@ -28,6 +28,4 @@ Guardar guion limpio, escena, tiempos, audio original/procesado, eventos, parám
 
 ## Rama de grabación existente
 
-Si la persona quiere editar una grabación, conservarla y estudiar transcript, silencios reales y cortes. El agente puede construir un montaje FFmpeg con una lista explícita de segmentos, captions y audio autorizado, o usar el editor/motor disponible. Un detector de silencio no sabe qué pausa es dramática: presentar criterio y una prueba antes de eliminar pausas en todo el archivo.
-
-Esta edición entrega helpers de análisis de referencia, voz y composición 2D. **No implementa edición automática de grabaciones, B-roll, diarización ni recorte inteligente.** No presentar esas tareas como un botón existente. Si se programa esa rama para el usuario, conservar proyecto, realizar demo equivalente y validar export/audio antes de una producción completa.
+Seguir [recording-edit.md](recording-edit.md) y los comandos `recording-*`. El motor ejecuta cortes y captions revisados y conserva el gate demo → aprobación → completo. El agente interpreta el transcript, decide qué pausas quitar con la persona y remapea los tiempos. La detección acústica solo propone candidatos. No se incluyen B-roll ni diarización.
