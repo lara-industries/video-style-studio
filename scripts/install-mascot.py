@@ -9,4 +9,4 @@ for name in names:
  if (dest/name).exists():raise SystemExit(f'Preserving existing {dest/name}; choose a new destination or review an update explicitly.')
 dest.mkdir(parents=True,exist_ok=True)
 for name in names:shutil.copytree(root/'skills'/name,dest/name,ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
-print(json.dumps({'installed':[str(dest/n) for n in names],'dependencies_installed':False,'next':'Read mascot-video-guide/SKILL.md and run base doctor; dependencies require an explained plan.'},ensure_ascii=False))
+print(json.dumps({'installed':[str(dest/n) for n in names],'dependencies_installed':False,'next':'Read mascot-video-guide/SKILL.md and run base doctor; dependencies require an explained plan.'},ensure_ascii=True))
